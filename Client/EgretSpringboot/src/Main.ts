@@ -64,13 +64,33 @@ class Main extends egret.DisplayObjectContainer {
 
     private async runGame() {
         await this.loadResource()
-        this.createGameScene();
-        const result = await RES.getResAsync("description_json")
-        this.startAnimation(result);
-        await platform.login();
-        const userInfo = await platform.getUserInfo();
-        console.log(userInfo);
 
+        var client = Stomp.client("ws://localhost:8080/simple", null)
+
+
+        client.connect({}, function (frame) {
+            // setConnected(true);
+            console.log('Connected:' + frame);
+            client.subscribe('/topic/say', function (response) {
+                console.log(JSON.parse(response.body).responseMessage);
+            });
+            // 另外再注册一下定时任务接受
+            client.subscribe('/topic/callback', function (response) {
+                console.log(response.body);
+            });
+
+            setInterval(()=>{
+                client.send("/welcome", {}, JSON.stringify({'name': 'user'}));
+            }, 2000)
+        });
+
+        // this.createGameScene();
+        // const result = await RES.getResAsync("description_json")
+        // this.startAnimation(result);
+        // await platform.login();
+        // const userInfo = await platform.getUserInfo();
+        // console.log(userInfo);
+    
     }
 
     private async loadResource() {

@@ -20,8 +20,9 @@ public class WebSocketStompConfig extends AbstractWebSocketMessageBrokerConfigur
     @Override
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry) {
         stompEndpointRegistry.addEndpoint("/simple")
-                .setAllowedOrigins("*") //解决跨域问题
-                .withSockJS();
+                //解决跨域问题
+                .setAllowedOrigins("*");
+//                .withSockJS();
     }
 
     @Override
